@@ -1,0 +1,39 @@
+% Link between TeX and lua files
+\usepackage[executable=/opt/homebrew/bin/python3]{pyluatex}
+
+% \begin{noindent}
+\begin{python}
+import sympy as sp
+from sympy.printing.latex import LatexPrinter, print_latex
+from sympy import latex
+from python.calc import calculate
+
+V = calculate({
+    "code": {
+        1: 1, 
+        2: 1,
+        3: 4,
+        4: 2,
+    },
+    "name": "Sándor Tibor",
+    "neptun": "C7XUDE"
+})
+
+N = V["numeric"]
+P = V["parametric"]
+
+from python.helper import printer, print_matrix, prin_TeX, my_latex
+
+H = printer({
+    "variables": V
+})
+\end{python}
+% \end{noindent}
+
+\usepackage{xargs}
+
+\newcommand{\pv}[1]{\py{V["#1"]}}
+\newcommand{\pvec}[2]{\py{V["#1"][#2]}}
+\newcommand{\pmat}[3]{\py{V["#1"][#2][#3]}}
+
+\newcommandx{\sipv}[3][3=]{\pyc{H["printSIVar"]({ "name":"#1", "unit":"#2", "dec":"#3" })}}

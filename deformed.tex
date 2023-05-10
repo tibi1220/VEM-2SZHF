@@ -1,0 +1,95 @@
+\documentclass[12pt]{standalone}
+
+\input{config/gateway}
+\input{config/math}
+\input{config/tikz}
+
+\begin{document}
+\begin{tikzpicture}[thick, scale=.667]
+  % Coordinate system
+  \draw[to-to, ultra thick, draw=cyan!40!black]
+  (0,\py{V["b"]}*1.25mm) node[below left] {$y$}
+  |- (\py{V["c"]}*1.3mm,0) node[below left] {$x$}
+  ;
+
+  % Coordinates
+  \coordinate (o) at (0,0);
+
+
+  \begin{scope}[opacity=.3, transparency group]
+    % \begin{noindent}
+    \begin{python}
+for i in range(1,9):
+    print(
+        r"\coordinate(" + str(i) + r") at (" +
+        str(N[i]["x"]) + "*1mm," +
+        str(N[i]["y"]) + "*1mm);"
+    )
+    \end{python}
+    % \end{noindent}
+
+    % Rectangles
+    % \begin{noindent}
+    \begin{python}
+for rec in P["rectangles"]:
+    print(
+        r"\draw[rod]" +
+        "(" + str(rec[0]) + ")" + "--" +
+        "(" + str(rec[1]) + ")" + "--" +
+        "(" + str(rec[2]) + ")" + "--" +
+        "(" + str(rec[3]) + ")" + "--" +
+        "cycle;"
+    )
+    \end{python}
+    % \end{noindent}
+
+    % Joints
+    \node[joint] (A) at (1) {1};
+    \node[joint] (B) at (2) {2};
+    \node[joint] (C) at (3) {3};
+    \node[joint] (D) at (4) {4};
+    \node[joint] (E) at (5) {5};
+    \node[joint] (F) at (6) {6};
+    \node[joint] (G) at (7) {7};
+    \node[joint] (H) at (8) {8};
+  \end{scope}
+
+  \begin{scope}[opacity=1]
+    % \begin{noindent}
+    \begin{python}
+for i in range(1,9):
+    print(
+        r"\coordinate(" + str(i) + r") at (" +
+        str(N[i]["x"]) + "*1mm+50mm*" + str(V["U_calc"][2*i - 2,0]) + "," +
+        str(N[i]["y"]) + "*1mm+50mm*" + str(V["U_calc"][2*i - 1,0]) + ");"
+    )
+    \end{python}
+    % \end{noindent}
+
+    % Rectangles
+    % \begin{noindent}
+    \begin{python}
+for rec in P["rectangles"]:
+    print(
+        r"\draw[rod, opacity=1]" +
+        "(" + str(rec[0]) + ")" + "--" +
+        "(" + str(rec[1]) + ")" + "--" +
+        "(" + str(rec[2]) + ")" + "--" +
+        "(" + str(rec[3]) + ")" + "--" +
+        "cycle;"
+    )
+    \end{python}
+    % \end{noindent}
+
+    % Joints
+    \node[joint] (A) at (1) {1};
+    \node[joint] (B) at (2) {2};
+    \node[joint] (C) at (3) {3};
+    \node[joint] (D) at (4) {4};
+    \node[joint] (E) at (5) {5};
+    \node[joint] (F) at (6) {6};
+    \node[joint] (G) at (7) {7};
+    \node[joint] (H) at (8) {8};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

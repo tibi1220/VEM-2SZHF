@@ -1,0 +1,526 @@
+\section{Csomóponti eredő elmozdulások}
+
+\subsection{Általános adatok}
+
+A csomópontok koordinátáit az \ref{table:U}. táblázat tartalmazza.
+\begin{table}[H]
+  \def\arraystretch{1.1}
+  \centering
+  \caption{A csomópontok koordinátái}
+  % \begin{noindent}
+  \begin{python}
+print(r"\def\arraystretch{1.1}")
+print(r"\begin{tabular}{| >{\cellcolor{gray!10}}{c} *{2}{|| X{1.5cm} | X{1.5cm}} |}")
+print(r"\hline \rowcolor{yellow!10}")
+print(r"Csp. & x & y & x \; [\text{mm}] & y \; [\text{mm}] \\")
+print(r"\hline \hline")
+for i in range(1, 9):
+    print(
+        f"{i} & {P[i]['x']} & {P[i]['y']} & " +
+        f"{N[i]['x']:.0f} & {N[i]['y']:.0f} \\\\ \hline"
+    )
+print(r"\end{tabular}")
+  \end{python}
+  % \end{noindent}
+  \label{table:U}
+\end{table}
+
+Az egyes elemekhez tartozó csomópontokat a \ref{table:lok}. táblázat foglalja
+össze.
+\begin{table}[H]
+  \def\arraystretch{1.1}
+  \centering
+  \caption{Elem -- csomópont összerendelések}
+  \begin{tabular}{| >{\cellcolor{gray!10}}{c} || c | c | c | c |}
+    \hline
+    \rowcolor{yellow!10}
+    Elem & 1. csp                     & 2. csp                     & 3. csp                     & 4. csp                     \\ \hline \hline
+    1    & \py{P["rectangles"][0][0]} & \py{P["rectangles"][0][1]} & \py{P["rectangles"][0][2]} & \py{P["rectangles"][0][3]} \\ \hline
+    2    & \py{P["rectangles"][1][0]} & \py{P["rectangles"][1][1]} & \py{P["rectangles"][1][2]} & \py{P["rectangles"][1][3]} \\ \hline
+    3    & \py{P["rectangles"][2][0]} & \py{P["rectangles"][2][1]} & \py{P["rectangles"][2][2]} & \py{P["rectangles"][2][3]} \\ \hline
+  \end{tabular}
+  \label{table:lok}
+\end{table}
+
+\subsection{Koordináta-transzformáció}
+
+Mivel elemeink nem szabályos négyszögek, ezért a számítás megkönnyítéséhez
+érdemes Koordináta-transzformációt végrehajtani. Elemenként egy olyan lokális
+$\xi$-$\eta$ koordináta-rendszerbe fogunk áttérni, ahol a lemezek csúcsainak
+koordinátái rendre $(-1;-1)$, $(1;-1)$, $(1;1)$, $(-1;1)$. A két
+koordináta-reprezentáció közötti kapcsolat:
+\begin{myframe}
+  \begin{equation}
+    x = \sum_{i=1}^4 N_i \cdot x_i
+    \text,
+    \qquad
+    \text{ és }
+    \qquad
+    y = \sum_{i=1}^4 N_i \cdot y_i
+    \text,
+  \end{equation}
+\end{myframe}
+ahol: $(x_i; y_i)$ az egyes csomópontok $x$-$y$ koordináta-rendszerbeli
+koordinátája, $N_i$ pedig az $i$-edik formafüggvényt jelöli, melyek alakjai:
+\begin{myframe}
+  \begin{gather}
+    N_1 = \frac{1}{4} (1 - \xi) (1 - \eta) \text, \\
+    N_2 = \frac{1}{4} (1 + \xi) (1 - \eta) \text, \\
+    N_3 = \frac{1}{4} (1 + \xi) (1 + \eta) \text, \\
+    N_4 = \frac{1}{4} (1 - \xi) (1 + \eta) \text.
+  \end{gather}
+\end{myframe}
+Ezek alapján felírható az egyes elemekhez tartozó lokális és a globális
+koordináta-rendszerek közötti transzformáció:
+\begin{myframe}
+  \begin{alignat}{9}
+     & (1) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][0]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][0]["y"])}
+    \\
+     & (2) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][1]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][1]["y"])}
+    \\
+     & (3) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][2]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][2]["y"])}
+  \end{alignat}
+\end{myframe}
+A leképezés inverze pedig:
+\begin{myframe}
+  \begin{alignat}{9}
+     & (1) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][0]["xi"])} \text,    &  & \qquad \eta = \py{my_latex(V["transform"][0]["eta"])}
+    \\
+     & (2) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][1]["xi"])} \text,    &  & \qquad \eta = \py{my_latex(V["transform"][1]["eta"], 4)}
+    \label{eq:alma}
+    \\
+     & (3) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][2]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][2]["eta"])}
+  \end{alignat}
+\end{myframe}
+
+\subsection{A Jacobi-mátrixok}
+
+Írjuk fel az egyes elemekhez tartozó leképezések Jacobi-mátrixát. Ehhez először
+A formafüggvények $\xi$ és $\eta$ szerinti parciális deriváltakra van szükségünk:
+\begin{myframe}
+  \begin{alignat}{9}
+    \pdv{N_1}{\xi}  & = \frac{\eta - 1}{4}
+    \text, \qquad \quad
+    \pdv{N_2}{\xi}  & = \frac{-\eta + 1}{4}
+    \text, \qquad \quad
+    \pdv{N_3}{\xi}  & = \frac{\eta + 1}{4}
+    \text, \qquad \quad
+    \pdv{N_4}{\xi}  & = \frac{-\eta - 1}{4}
+    \text,                                  \\[3mm]
+    \pdv{N_1}{\eta} & = \frac{\xi - 1}{4}
+    \text, \qquad \quad
+    \pdv{N_2}{\eta} & = \frac{-\xi - 1}{4}
+    \text, \qquad \quad
+    \pdv{N_3}{\eta} & = \frac{\xi + 1}{4}
+    \text, \qquad \quad
+    \pdv{N_4}{\eta} & = \frac{-\xi + 1}{4}
+    \text.
+  \end{alignat}
+\end{myframe}
+A Jacobi mátrix alakja paraméteresen:
+\begin{myframe}
+  \begin{equation}
+    \rmat J_i = \begin{bmatrix}
+      \displaystyle \pdv{x}{\xi}  &
+      \displaystyle \pdv{y}{\xi}    \\[4mm]
+      \displaystyle \pdv{x}{\eta} &
+      \displaystyle \pdv{y}{\eta}   \\
+    \end{bmatrix} = \begin{bmatrix}
+      \displaystyle \sum \pdv{N_i}{\xi} x_i  &
+      \displaystyle \sum \pdv{N_i}{\xi} y_i    \\[4mm]
+      \displaystyle \sum \pdv{N_i}{\eta} x_i &
+      \displaystyle \sum \pdv{N_i}{\eta} y_i   \\
+    \end{bmatrix}
+    \text.
+  \end{equation}
+\end{myframe}
+Ezek alapján az egyes elemekhez tartozó Jacobi-mátrixok numerikus alakja:
+\begin{myframe}
+  \begin{align}
+    \rmat J_1 & =
+    \py{my_latex(V["J"][0], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \text,
+    \\
+    \rmat J_2 & =
+    \py{my_latex(V["J"][1], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \text,
+    \\
+    \rmat J_3 & =
+    \py{my_latex(V["J"][2], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \text.
+  \end{align}
+\end{myframe}
+A formafüggvények globális és lokális koordináták szerinti parciális deriváltai
+között a Jacobi mátrixok inverzei teremtenek kapcsolatot:
+\begin{myframe}
+  \begin{equation}
+    \begin{bmatrix}
+      \displaystyle \pdv{N_i}{x} \\[4mm]
+      \displaystyle \pdv{N_i}{y} \\
+    \end{bmatrix}
+    =
+    \underbrace{
+      \begin{bmatrix}
+        \displaystyle \pdv{\xi}{x} &
+        \displaystyle \pdv{\eta}{x}  \\[4mm]
+        \displaystyle \pdv{\xi}{y} &
+        \displaystyle \pdv{\eta}{y}  \\
+      \end{bmatrix}
+    }_{\rmat J^{-1}}
+    \begin{bmatrix}
+      \displaystyle \pdv{N_i}{\xi}  \\[4mm]
+      \displaystyle \pdv{N_i}{\eta} \\
+    \end{bmatrix}
+    \text.
+  \end{equation}
+\end{myframe}
+Ezek paraméteresen:
+\begin{myframe}
+  \def\arraystretch{2.25}
+  \begin{align}
+    \rmat J_1^{-1} & =
+    \py{my_latex(V["inv_J"][0], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \text,
+    \\
+    \rmat J_2^{-1} & =
+    \py{my_latex(V["inv_J"][1], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}").replace("6666666666666", "")}
+    \text,
+    \\
+    \rmat J_3^{-1} & =
+    \py{my_latex(V["inv_J"][2], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}").replace("6666666666666", "")}
+    \text.
+  \end{align}
+\end{myframe}
+
+\subsection{Elemi merevségi mátrixok}
+
+Tetszőleges síkbeli négyszögelem merevségi mátrixa az alábbi összefüggéssel
+számítható:
+\begin{myframe}
+  \begin{equation}
+    \rmat K_i
+    = \int_{-1}^{+1} \int_{-1}^{+1}
+    \rmat B^{\mathsf T}_i \,
+    \rmat D_i \,
+    \rmat B_i \,
+    t \,
+    \det \rmat J_i \,
+    \mathrm d \xi \,
+    \mathrm d \eta
+    \text.
+  \end{equation}
+\end{myframe}
+
+Az határozott integrál értéket $2 \times 2$-es Gauss-kvadratúra segítségével
+fogjuk közelíteni:
+\begin{myframe}
+  \begin{equation}
+    \rmat K_i \approx
+    \sum{i=1}^{2} \int_{j=1}^{2}
+    w_i \,
+    w_j \,
+    \rmat B^{\mathsf T}_i \,
+    \rmat D_i \,
+    \rmat B_i \,
+    t \,
+    \det \rmat J_i \,
+    \text,
+  \end{equation}
+\end{myframe}
+
+Az integrálási súlyok esetünkben: $w_1 = w_2 = 1$. A Gauss-pontok koordinátáit
+pedig a \ref{fig:Gaussian}. ábra tartalmazza.
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[thick, scale=3]
+    \draw[draw=gray, fill=gray!10] (-1,-1) rectangle (1,1);
+    \draw[ultra thick, -to] (-1.2,0) -- ++(2.5,0) node[below left] {$\xi$};
+    \draw[ultra thick, -to] (0,-1.2) -- ++(0,2.5) node[below right] {$\eta$};
+
+    \node[dot] (t) at (-0.58, -.58) {}; \node[above right] at (t) {$(\xi_1; \eta_1)$}; \node[below left]  at (t) {$(-1/\sqrt{3}; -1/\sqrt{3})$};
+    \node[dot] (t) at (+0.58, -.58) {}; \node[above left]  at (t) {$(\xi_2; \eta_1)$}; \node[below right] at (t) {$( 1/\sqrt{3}; -1/\sqrt{3})$};
+    \node[dot] (t) at (+0.58, +.58) {}; \node[below left]  at (t) {$(\xi_2; \eta_2)$}; \node[above right] at (t) {$( 1/\sqrt{3};  1/\sqrt{3})$};
+    \node[dot] (t) at (-0.58, +.58) {}; \node[below right] at (t) {$(\xi_1; \eta_2)$}; \node[above left]  at (t) {$(-1/\sqrt{3};  1/\sqrt{3})$};
+  \end{tikzpicture}
+  \caption{Gauss-pontok szemléltelése}
+  \label{fig:Gaussian}
+\end{figure}
+
+A képletben szerepel egy $\rmat B$ mátrix is, amely a formafüggvények $x$ és $y$
+változók szerinti parciális deriváltjait tartalmazza az alábbi módon:
+\begin{myframe}
+  \newcommand{\nd}[2]{\displaystyle\pdv{N_{#1}}{#2}}
+  \def\arraystretch{2}
+  \begin{equation}
+    \rmat B_i = \begin{bmatrix}
+      \nd{1}{x} & 0         &
+      \nd{2}{x} & 0         &
+      \nd{3}{x} & 0         &
+      \nd{4}{x} & 0
+      \\
+      0         & \nd{1}{y} &
+      0         & \nd{2}{y} &
+      0         & \nd{3}{y} &
+      0         & \nd{4}{y}
+      \\
+      \nd{1}{y} & \nd{1}{x} &
+      \nd{2}{y} & \nd{2}{x} &
+      \nd{3}{y} & \nd{3}{x} &
+      \nd{4}{y} & \nd{4}{x}
+      \text.
+    \end{bmatrix}
+  \end{equation}
+\end{myframe}
+
+A $\rmat D$ mátrix pedig
+\py{V["state"] == "SF" and "Sík-feszültségi" or "Sík-alakváltozási"} állapot
+esetén az alábbi alakot veszi fel:
+\begin{myframe}
+  \newcommand{\sfa}[2]{\py{V["state"] == "SF" and r"#1" or r"#2"}}
+  \def\arraystretch{1.15}
+  \begin{equation}
+    \rmat D_i =
+    \sfa{\frac{E}{1 - \nu^2}}{\frac{E}{(1+\nu)(1-2\nu)}}
+    \begin{bmatrix}
+      \sfa{1}{1-\nu} & \nu            & 0                         \\
+      \nu            & \sfa{1}{1-\nu} & 0                         \\
+      0              & 0              & \sfa{(1-\nu)}{(1-2\nu)}/2
+    \end{bmatrix}
+    \text.
+  \end{equation}
+\end{myframe}
+
+Az elemi merevségi mátrixok tehát numerikusan:
+\begin{myframe}
+  \begin{align}
+    \siplaces{4}
+    \sifix{}
+    \rmat K_1 = \left[
+      \scalebox{.75}{$\begin{array}{*{8}{X{1.55cm}}}
+                            \pyc{print_matrix(V["K_i"][0], 1e-6, 1e-6)}
+                          \end{array}$}
+      \right]
+    \cdot 10^6
+    \\
+    \siplaces{4}
+    \sifix{}
+    \rmat K_2 = \left[
+      \scalebox{.75}{$\begin{array}{*{8}{X{1.55cm}}}
+                            \pyc{print_matrix(V["K_i"][1], 1e-6, 1e-6)}
+                          \end{array}$}
+      \right]
+    \cdot 10^6
+    \\
+    \siplaces{4}
+    \sifix{}
+    \rmat K_3 = \left[
+      \scalebox{.75}{$\begin{array}{*{8}{X{1.55cm}}}
+                            \pyc{print_matrix(V["K_i"][2], 1e-6, 1e-6)}
+                          \end{array}$}
+      \right]
+    \cdot 10^6
+  \end{align}
+\end{myframe}
+
+\subsection{A globális merevségi mátrix}
+
+A globális merevségi mátrix meghatározásához írjuk fel az egyes elemekhez tartozó szabadsági foko-
+kat mátrixosan:
+\begin{myframe}
+  \begin{equation}
+    \py{latex(sp.Matrix(V["DOF"]), mat_str="array").replace("cccccccc", "*{8}{X{7mm}}")}
+    \text.
+  \end{equation}
+\end{myframe}
+
+A globális merevségi mátrix összeállításakor figyelnünk kell arra, hogy az adott
+elem merevségi mátrixának megfelelő elemeit a hozzá tartozó szabadsági fokhoz
+tartozó helyhez rendeljük hozzá. Ezt a \ref{fig:K-construction} ábra
+szemlélteti.
+\begin{figure}[ht]
+  \centering
+  \includestandalone{K-construction}
+  \caption{A globális merevségi mátrix szemléletes felépítése}
+  \label{fig:K-construction}
+\end{figure}
+
+A globális merevségi mátrix tehát az alábbi alakot veszi fel:
+\begin{myframe}
+  \begin{equation}
+    \siplaces{4}
+    \sifix{}
+    \rmat K = \left[
+      \scalebox{.45}{
+        $\begin{array}{*{16}{X{1.45cm}}}
+            \pyc{print_matrix(V["K"], 1e-6, 1e-6)}
+          \end{array}$
+      }
+      \right]
+    \cdot 10^6
+    \text.
+  \end{equation}
+\end{myframe}
+
+\subsection{A merevségi egyenlet}
+
+Írjuk fel a globális elmozdulás-vektort. A görgős megtámasztás miatt a
+(\py{P["F"]["x"][0]}) és (\py{P["F"]["x"][1]}) az $x$, a (\py{P["F"]["y"][0]})
+és (\py{P["F"]["y"][1]}) pontokban pedig az $y$ irányú elmozdulás gátolt,
+vagyis ezen elmozdulás-komponensek zérusak. Ezek alapján a vektor paraméteresen:
+\begin{myframe}
+  \begin{equation}
+    \rvec U = \py{latex(V["U_sym"].T).replace('cc', "X{5mm}X{4.95mm}")}^{\mathsf T}
+    \text.
+  \end{equation}
+\end{myframe}
+
+A görgős támasz miatt a gátolt irányokban kényszererők ébrednek, valamint
+a megoszló terhelés, mint koncentrált erő is megjelenik a globális
+terhelésvektorban, amely az alábbi alakot veszi fel:
+\begin{myframe}
+  \begin{equation}
+    \rvec F = \py{my_latex(V["F_sym"].T, fold_short_frac=True)}
+    \text.
+  \end{equation}
+\end{myframe}
+
+A rendszer merevségi egyenlete:
+\begin{equation}
+  \rmat K \rvec U = \rvec F
+  \text.
+\end{equation}
+
+Fontos, hogy a merevségi egyenlet csak abban az esetben oldható meg mátrix
+inverziós módszerrel, amennyiben $\rmat K$ mátrix reguláris. Mivel ez a
+feltétel nem teljesül, ezért az egyenletrendszert kondenzálnunk kell.
+A kondenzált merevségi egyenletrendszert úgy kapjuk meg, hogy a gátolt
+szabadsági fokokhoz tartozó sorokat és oszlopokat töröljük az eredeti, globális
+merevségi egyenletből:
+\begin{myframe}
+  \begin{equation}
+    \sifix{}
+    \siplaces{4}
+    \underbrace{\left[
+        \scalebox{.48}{
+          $\begin{array}{*{12}{X{1.45cm}}}
+              \pyc{print_matrix(V["K_kond"], 1e-16, 1e-6)}
+            \end{array}$
+        }
+        \right]
+      \cdot 10^6}_{\widehat{\rmat K}}
+    \cdot
+    \underbrace{\left[
+    \scalebox{.48}{
+    $\py{latex(V["U_sym_kond"], mat_delim="").replace('cc', "X{5mm}X{4.95mm}")}$
+    }
+    \right]}_{\widehat{\rvec U}}
+    \siplaces{0}
+    =
+    \underbrace{\left[
+        \scalebox{.48}{
+          $\begin{array}{*{12}{X{1.45cm}}}
+              \pyc{print_matrix(V["F_kond"])}
+            \end{array}$
+        }
+        \right]}_{\widehat{\rvec F}}
+    \text.
+  \end{equation}
+\end{myframe}
+
+Mivel $\widehat{\rmat K}$ mátrix reguláris, ezért az egyenletrendszer
+mátrix-invertálással megoldható, vagyis:
+\begin{myframe}
+  \begin{equation}
+    \widehat{\rvec U}
+    =
+    \sifix{}
+    \siplaces{4}
+    \underbrace{\left[
+        \scalebox{.5}{
+          $\begin{array}{*{12}{X{1.45cm}}}
+              \pyc{print_matrix(V["K_kond_inv"], 1e-16, 1e+6)}
+            \end{array}$
+        }
+        \right]
+      \cdot 10^{-6}}_{\widehat{\rmat K}^{-1}}
+    \cdot
+    \siplaces{0}
+    \underbrace{\left[
+        \scalebox{.5}{
+          $\begin{array}{*{12}{X{1.45cm}}}
+              \pyc{print_matrix(V["F_kond"])}
+            \end{array}$
+        }
+        \right]}_{\widehat{\rvec F}}
+    \text.
+  \end{equation}
+\end{myframe}
+
+Az egyenlet megoldása numerikusan:
+\begin{myframe}
+  \begin{equation}
+    \siplaces{6}
+    \widehat{\rvec U} = \left[
+      \scalebox{.65}{
+        $\begin{array}{c}
+            \pyc{print_matrix(V["U_kond"])}
+          \end{array}$
+      }
+      \right]
+    \text{mm}
+    \text.
+  \end{equation}
+\end{myframe}
+
+A globális elmozdulásvektorba visszahelyettesítve:
+\begin{myframe}
+  \begin{equation}
+    \siplaces{6}
+    \rvec U = \left[
+      \scalebox{.65}{
+        $\begin{array}{c}
+            \pyc{print_matrix(V["U_calc"])}
+          \end{array}$
+      }
+      \right]
+    \text{mm}
+    \text.
+  \end{equation}
+\end{myframe}
+
+Az eredő elmozdulások a Pitagorasz-tétel alapján számíthatóak:
+\begin{myframe}
+  \begin{equation}
+    \Delta_i = \sqrt{{U_i}^2 + {V_i}^2}
+    \text.
+  \end{equation}
+\end{myframe}
+
+Numerikusan:
+\begin{myframe}
+  \begin{equation}
+    \rvec{\Delta} = \begin{bmatrix}
+      \Delta_1 \\
+      \Delta_2 \\
+      \Delta_3 \\
+      \Delta_4 \\
+      \Delta_5 \\
+      \Delta_6 \\
+      \Delta_7 \\
+      \Delta_8 \\
+    \end{bmatrix}
+    =
+    \siplaces{6}
+    \begin{bmatrix}
+      \pyc{print_matrix(V["Delta_mm"])}
+    \end{bmatrix}
+    \text{mm}
+    =
+    \siplaces{3}
+    \begin{bmatrix}
+      \pyc{print_matrix(V["Delta_um"])}
+    \end{bmatrix}
+    \upmu\text{m}
+    \text.
+  \end{equation}
+\end{myframe}

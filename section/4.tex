@@ -1,0 +1,56 @@
+\section{A csomóponti terhelések vektora}
+
+A globális terhelési vektor a merevségi egyenlet alapján:
+\begin{myframe}
+  \begin{equation}
+    \rvec F
+    = \rmat K \rvec U
+    =
+    \siplaces{2} \sisetup{drop-zero-decimal}
+    \underbrace{\left[
+        \scalebox{.667}{$\begin{array}{c}
+              \pyc{print_matrix(V["F_calc"], 1e-6, 1, 2)}
+            \end{array}$}
+        \right]}_{\rvec F}
+    \mathrm N
+    = \siplaces{0}
+    \underbrace{\left[
+        \scalebox{.667}{$\begin{array}{c}
+              \pyc{print_matrix(V["F_base"], 1e-6, 1, 0)}
+            \end{array}$}
+        \right]}_{\rvec F_t \text{ -- terhelés}}
+    \mathrm N
+    + \siplaces{2}
+    \underbrace{\left[
+        \scalebox{.667}{$\begin{array}{c}
+              \pyc{print_matrix(V["F_reac"], 1e-6, 1, 2)}
+            \end{array}$}
+        \right]}_{\rvec F_r \text{ -- reakció}}
+    \mathrm N
+    \text.
+  \end{equation}
+\end{myframe}
+
+A csomóponti terhelések vektorának nemzérus komponensei tehát:
+\begin{myframe}
+  \vspace{-.66em}
+  \begin{multicols}{3}
+    \begin{itemize}
+      % \begin{noindent}
+      \begin{python}
+j = 0
+for i in range(16):
+    if abs(V["F_calc"][i, 0]) >= 1:
+        j += 1
+        print(
+            r"\item $F_{" + str(i // 2 + 1) + 
+            (i % 2 and "y" or "x") + 
+            r"} = ", end=""
+        )
+        prin_TeX(V["F_calc"][i, 0] / 1000, "kN", 3)
+        print("$" + (j == 6 and "." or ","))
+      \end{python}
+      % \end{noindent}
+    \end{itemize}
+  \end{multicols}
+\end{myframe}

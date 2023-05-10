@@ -1,0 +1,70 @@
+\section{A (2)-es elem súlypontjában ébredő feszültségek}
+
+Egy elem tetszőleges pontjában ébredő feszültségek az alábbi képlettel
+számítható:
+\begin{myframe}
+  \begin{equation}
+    \rvec \sigma_i(\xi; \eta)
+    = \rmat D \, \rmat B_i(\xi; \eta) \rvec U_i
+    \text.
+  \end{equation}
+\end{myframe}
+Mivel a (2)-es elem súlypontjában vagyunk kíváncsiak a feszültségek értékeire,
+ezért először meg kell határoznunk ennek koordinátáit. Ezek a globális
+koordináta-rendszerben az alábbi formulával határozhatóak meg:
+\begin{myframe}
+  \begin{equation}
+    x_s = \frac{1}{6A}\sum _{i=1}^{4}(x_{i}+x_{i+1})(x_{i}\ y_{i+1}-x_{i+1}\ y_{i})
+    \text,
+    \qquad
+    y_s = \frac{1}{6A}\sum _{i=1}^{4}(y_{i}+y_{i+1})(x_{i}\ y_{i+1}-x_{i+1}\ y_{i})
+    \text,
+  \end{equation}
+\end{myframe}
+ahol $A_i$ a négyszög előjeles területe, értéke az alábbi képlettel számítható:
+\begin{myframe}
+  \begin{equation}
+    A_i = \frac{1}{2}\sum _{i=1}^{4}(x_{i}\ y_{i+1}-x_{i+1}\ y_{i})
+  \end{equation}
+\end{myframe}
+A fenti kifejezésekbe $i=4$ esetén adódó $i + 1 = 5$-ödik elemek helyére az
+első elemhez tartozó mennyiségeket kell behelyettesíteni. A (2)-es elem
+súlypontja a globális koordináta rendszerben:
+\begin{myframe}
+  \begin{equation}
+    x_s = \pyc{prin_TeX(V["C"][1]["x"], "mm", 4)}
+    \text,
+    \qquad
+    y_s = \pyc{prin_TeX(V["C"][1]["y"], "mm", 4)}
+    \text.
+  \end{equation}
+\end{myframe}
+A (\ref{eq:alma})-es egyenlet segítségével a súlypont koordinátái a lokális
+koordináta-rendszerben:
+\begin{myframe}
+  \begin{equation}
+    \sisetup{drop-zero-decimal}
+    \xi_s = \pyc{prin_TeX(V["C"][1]["xi"], "", 4)}
+    \text,
+    \qquad
+    \eta_s = \pyc{prin_TeX(V["C"][1]["eta"], "", 4)}
+    \text.
+  \end{equation}
+\end{myframe}
+A (2)-es elem súlypontjában ébredő feszültségek tehát:
+\begin{myframe}
+  \begin{equation}
+    \rvec \sigma_2(\xi_s; \eta_s)
+    =
+    \begin{bmatrix}
+      \sigma_x \\ \sigma_y \\ \tau_{xy}
+    \end{bmatrix}
+    =
+    \siplaces{4}
+    \begin{bmatrix}
+      \pyc{print_matrix(V["sigma_i"][1])}
+    \end{bmatrix}
+    \mathrm{MPa}
+    \text.
+  \end{equation}
+\end{myframe}

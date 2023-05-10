@@ -1,0 +1,111 @@
+\documentclass[12pt]{standalone}
+
+\input{config/gateway}
+\input{config/math}
+\input{config/tikz}
+
+\begin{document}
+\begin{tikzpicture}[thick, scale=.667]
+  % General Settings
+  \def\l{1.4cm}
+  \pgfdeclarelayer{lb2} % Layer back 2
+  \pgfdeclarelayer{lb1} % Layer back 1
+  \pgfdeclarelayer{lf1} % Layer front 1
+  \pgfdeclarelayer{lf2} % Layer front 2
+  \pgfsetlayers{lb2,lb1,main,lf1,lf2}
+
+  % Coordinates
+  \coordinate (o) at (0,0);
+  % \begin{noindent}
+  \begin{python}
+for i in range(1,9):
+    print(
+        r"\coordinate(" + str(i) + r") at (" +
+        str(N[i]["x"]) + "*1mm," +
+        str(N[i]["y"]) + "*1mm);"
+    )
+  \end{python}
+  % \end{noindent}
+
+  % Joints
+  \begin{pgfonlayer}{lf2}
+    \node[joint] (A) at (1) {1};
+    \node[joint] (B) at (2) {2};
+    \node[joint] (C) at (3) {3};
+    \node[joint] (D) at (4) {4};
+    \node[joint] (E) at (5) {5};
+    \node[joint] (F) at (6) {6};
+    \node[joint] (G) at (7) {7};
+    \node[joint] (H) at (8) {8};
+  \end{pgfonlayer}
+
+  % Rectangles
+  \begin{pgfonlayer}{lb1}
+    % \begin{noindent}
+    \begin{python}
+for rec in P["rectangles"]:
+    print(
+        r"\draw[rod]" +
+        "(" + str(rec[0]) + ")" + "--" +
+        "(" + str(rec[1]) + ")" + "--" +
+        "(" + str(rec[2]) + ")" + "--" +
+        "(" + str(rec[3]) + ")" + "--" +
+        "cycle;"
+    )
+    \end{python}
+    % \end{noindent}
+  \end{pgfonlayer}
+
+  % Distributed load
+  \begin{pgfonlayer}{lb2}
+    \draw[fill=red!10, draw=yellow!40!black, ultra thick]
+    (\py{P["p"]["b"]})
+    -- ++(\l*\py{P["p"]["l"]["x"]}, \l*\py{P["p"]["l"]["y"]})
+    -- ($(\py{P["p"]["e"]})+(\l*\py{P["p"]["l"]["x"]}, \l*\py{P["p"]["l"]["y"]})$)
+    -- (\py{P["p"]["e"]});
+
+    \draw[-{Latex[round]}, ultra thick, draw=yellow!40!black]
+    ($(\py{P["p"]["b"]})+(\l/6*\py{P["p"]["v"]["x"]}, \l/6*\py{P["p"]["v"]["y"]})$)
+    -- ++(\l*\py{P["p"]["l"]["x"]}*2/3, \l*\py{P["p"]["l"]["y"]}*2/3)
+    node[pos=.6, \py{P["p"]["v"]["l"]}] {$p$}
+    ;
+  \end{pgfonlayer}
+
+  % Coordinate system
+  \begin{pgfonlayer}{lb2}
+    \draw[to-to, ultra thick, draw=cyan!40!black]
+    (0,\py{V["b"]}*1.25mm) node[below left] {$y$}
+    |- (\py{V["c"]}*1.3mm,0) node[below left] {$x$}
+    ;
+  \end{pgfonlayer}
+
+  % Reacc
+  \begin{pgfonlayer}{lf1}
+    % \begin{noindent}
+    \begin{python}
+for i in range(2):
+    print(
+        r"\draw[draw=red!40!gray, -{Latex[round]}, line width=1mm]" +
+        "(" + str(P["F"]["y"][i]) + ")" +  r"-- ++(0,1.5*\l)" +
+        r" node[midway, right] {$F_{" + str(P["F"]["y"][i]) + "y}$};"
+        +
+        r"\draw[draw=red!40!gray, -{Latex[round]}, line width=1mm]" +
+        "(" + str(P["F"]["x"][i]) + ")" +  r"-- ++(1.5*\l,0)" +
+        r" node[midway, above] {$F_{" + str(P["F"]["x"][i]) + "y}$};"
+    )
+    \end{python}
+    % \end{noindent}
+  \end{pgfonlayer}
+
+  % Dimentions
+  \draw[dashed, gray, thick] (1) -- ++(-22mm, 0);
+  \draw[dashed, gray, thick] (5) -- ++(-22mm, 0);
+  \draw[dashed, gray, thick] (2) -- ++(0, 15mm);
+
+  \draw[dim] ($(5)-(19.75mm,0)$) -- ++($(1)-(5)$) node[midway, fill=white] {$b$};
+  \draw[dim] ($(1)+(0,13.25mm)$) -- ++($(2)-(1)$) node[midway, fill=white] {$c$};
+  \draw[dim] ($(5)!.4!(1)$) -- ++ ($(6)-(5)$) node[midway, fill=yellow!25] {$c / 3$};
+  \draw[dim] ($(3)!.5!(4)$) -- ++ (0,1mm*\pv{a}) node[midway, fill=yellow!25] {$a$};
+  \draw[dim] ($(8)!.4!(2)$) -- ++ ($(7)-(8)$) node[midway, fill=yellow!25] {$a$};
+\end{tikzpicture}
+\end{document}
