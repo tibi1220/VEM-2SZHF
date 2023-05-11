@@ -67,7 +67,15 @@ def calculate(config):
         eq_1 = sp.Eq(l_1, x)
         eq_2 = sp.Eq(l_2, y)
 
-        [(r_1, r_2)] = sp.solve([eq_1, eq_2], (xi, eta))
+        sol = sp.solve([eq_1, eq_2], (xi, eta))
+
+        r_1, r_2 = None, None
+
+        if type(sol) is dict:
+            r_1 = sol[xi]
+            r_2 = sol[eta]
+        else:
+            [(r_1, r_2)] = sp.solve((eq_1, eq_2), (xi, eta))
 
         transform.append({
             "xi": sp.simplify(r_1),
@@ -217,7 +225,6 @@ def calculate(config):
 
     # Calculate Delta in mm and in um
     Delta_mm = []
-    Delta_um = []
 
     for i in range(8):
         Delta_mm.append([(U_calc[2*i, 0]**2 + U_calc[2*i+1, 0]**2)**(1/2)])

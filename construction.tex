@@ -98,14 +98,19 @@ for i in range(2):
   \end{pgfonlayer}
 
   % Dimentions
-  \draw[dashed, gray, thick] (1) -- ++(-22mm, 0);
-  \draw[dashed, gray, thick] (5) -- ++(-22mm, 0);
-  \draw[dashed, gray, thick] (2) -- ++(0, 15mm);
+  % \begin{noindent}
+  \begin{python}
+if V["code"][1] == 1:
+    print(r"\draw[dashed, gray, thick] (1) -- ++(-22mm, 0);")
+    print(r"\draw[dashed, gray, thick] (5) -- ++(-22mm, 0);")
+    print(r"\draw[dashed, gray, thick] (2) -- ++(0, 15mm);")
 
-  \draw[dim] ($(5)-(19.75mm,0)$) -- ++($(1)-(5)$) node[midway, fill=white] {$b$};
-  \draw[dim] ($(1)+(0,13.25mm)$) -- ++($(2)-(1)$) node[midway, fill=white] {$c$};
-  \draw[dim] ($(5)!.4!(1)$) -- ++ ($(6)-(5)$) node[midway, fill=yellow!25] {$c / 3$};
-  \draw[dim] ($(3)!.5!(4)$) -- ++ (0,1mm*\pv{a}) node[midway, fill=yellow!25] {$a$};
-  \draw[dim] ($(8)!.4!(2)$) -- ++ ($(7)-(8)$) node[midway, fill=yellow!25] {$a$};
+    print(r"\draw[dim] ($(5)-(19.75mm,0)$) -- ++($(1)-(5)$) node[midway, fill=white] {$b$};")
+    print(r"\draw[dim] ($(1)+(0,13.25mm)$) -- ++($(2)-(1)$) node[midway, fill=white] {$c$};")
+    print(r"\draw[dim] ($(5)!.4!(1)$) -- ++ ($(6)-(5)$) node[midway, fill=yellow!25] {$c / 3$};")
+    print(r"\draw[dim] ($(3)!.5!(4)$) -- ++ (0,1mm*\pv{a}) node[midway, fill=yellow!25] {$a$};")
+    print(r"\draw[dim] ($(8)!.4!(2)$) -- ++ ($(7)-(8)$) node[midway, fill=yellow!25] {$a$};")
+  \end{python}
+  % \end{noindent}
 \end{tikzpicture}
 \end{document}

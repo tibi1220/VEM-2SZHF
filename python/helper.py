@@ -1,4 +1,4 @@
-from sympy import latex, Number
+from sympy import latex, Number, Float, Matrix, preorder_traversal
 import re
 
 
@@ -40,13 +40,27 @@ def print_raw_matrix(matrix):
                 print("&")
 
 
-def round_expr(expr, num_digits):
-    return expr.xreplace({n: round(n, num_digits) for n in expr.atoms(Number)})
+# def round_expr(expr, num_digits):
+#     return expr.xreplace({n: round(n, num_digits) for n in expr.atoms(Number)})
+
+
+def round_expr(ex, digits):
+    for a in preorder_traversal(ex):
+        if isinstance(a, Float):
+            ex = ex.subs(a, round(a, digits))
+    return ex
 
 
 def my_latex(var, digits=-1, **kwargs):
     if digits != -1:
-        var = round_expr(var, digits)
+        if type(var) == Matrix:
+            (c, r) = var.shape
+
+            for i in range(c):
+                for j in range(r):
+                    var[i, j] = round_expr(var[i, j], digits)
+        else:
+            var = round_expr(var, digits)
 
     return re.sub(
         r"\{,\}0(?=\D|$)",

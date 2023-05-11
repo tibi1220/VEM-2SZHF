@@ -74,22 +74,22 @@ Ezek alapján felírható az egyes elemekhez tartozó lokális és a globális
 koordináta-rendszerek közötti transzformáció:
 \begin{myframe}
   \begin{alignat}{9}
-     & (1) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][0]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][0]["y"])}
+     & (1) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][0]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][0]["y"],2)}
     \\
-     & (2) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][1]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][1]["y"])}
+     & (2) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][1]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][1]["y"],2)}
     \\
-     & (3) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][2]["x"])} \text, &  & \qquad y = \py{my_latex(V["transform"][2]["y"])}
+     & (3) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][2]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][2]["y"],2)}
   \end{alignat}
 \end{myframe}
 A leképezés inverze pedig:
 \begin{myframe}
   \begin{alignat}{9}
-     & (1) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][0]["xi"])} \text,    &  & \qquad \eta = \py{my_latex(V["transform"][0]["eta"])}
+     & (1) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][0]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][0]["eta"], 4)}
     \\
-     & (2) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][1]["xi"])} \text,    &  & \qquad \eta = \py{my_latex(V["transform"][1]["eta"], 4)}
+     & (2) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][1]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][1]["eta"], 4)}
     \label{eq:alma}
     \\
-     & (3) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][2]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][2]["eta"])}
+     & (3) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][2]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][2]["eta"], 4)}
   \end{alignat}
 \end{myframe}
 
@@ -176,18 +176,18 @@ között a Jacobi mátrixok inverzei teremtenek kapcsolatot:
 \end{myframe}
 Ezek paraméteresen:
 \begin{myframe}
-  \def\arraystretch{2.25}
+  \def\arraystretch{2.15}
   \begin{align}
-    \rmat J_1^{-1} & =
-    \py{my_latex(V["inv_J"][0], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    {\rmat J_1}^{-1} & =
+    \py{my_latex(V["inv_J"][0], 4, mat_str="array").replace('cc', "*{2}{X{4cm}}")}
     \text,
     \\
-    \rmat J_2^{-1} & =
-    \py{my_latex(V["inv_J"][1], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}").replace("6666666666666", "")}
+    {\rmat J_2}^{-1} & =
+    \py{my_latex(V["inv_J"][1], 4, mat_str="array").replace('cc', "*{2}{X{4cm}}")}
     \text,
     \\
-    \rmat J_3^{-1} & =
-    \py{my_latex(V["inv_J"][2], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}").replace("6666666666666", "")}
+    {\rmat J_3}^{-1} & =
+    \py{my_latex(V["inv_J"][2], 4, mat_str="array").replace('cc', "*{2}{X{4cm}}")}
     \text.
   \end{align}
 \end{myframe}
@@ -216,7 +216,7 @@ fogjuk közelíteni:
 \begin{myframe}
   \begin{equation}
     \rmat K_i \approx
-    \sum{i=1}^{2} \int_{j=1}^{2}
+    \sum_{i=1}^{2} \sum_{j=1}^{2}
     w_i \,
     w_j \,
     \rmat B^{\mathsf T}_i \,
@@ -237,10 +237,15 @@ pedig a \ref{fig:Gaussian}. ábra tartalmazza.
     \draw[ultra thick, -to] (-1.2,0) -- ++(2.5,0) node[below left] {$\xi$};
     \draw[ultra thick, -to] (0,-1.2) -- ++(0,2.5) node[below right] {$\eta$};
 
-    \node[dot] (t) at (-0.58, -.58) {}; \node[above right] at (t) {$(\xi_1; \eta_1)$}; \node[below left]  at (t) {$(-1/\sqrt{3}; -1/\sqrt{3})$};
-    \node[dot] (t) at (+0.58, -.58) {}; \node[above left]  at (t) {$(\xi_2; \eta_1)$}; \node[below right] at (t) {$( 1/\sqrt{3}; -1/\sqrt{3})$};
-    \node[dot] (t) at (+0.58, +.58) {}; \node[below left]  at (t) {$(\xi_2; \eta_2)$}; \node[above right] at (t) {$( 1/\sqrt{3};  1/\sqrt{3})$};
-    \node[dot] (t) at (-0.58, +.58) {}; \node[below right] at (t) {$(\xi_1; \eta_2)$}; \node[above left]  at (t) {$(-1/\sqrt{3};  1/\sqrt{3})$};
+    % \node[dot] (t) at (-0.58, -.58) {}; \node[above right] at (t) {$(\xi_1; \eta_1)$}; \node[below left]  at (t) {$(-1/\sqrt{3}; -1/\sqrt{3})$};
+    % \node[dot] (t) at (+0.58, -.58) {}; \node[above left]  at (t) {$(\xi_2; \eta_1)$}; \node[below right] at (t) {$( 1/\sqrt{3}; -1/\sqrt{3})$};
+    % \node[dot] (t) at (+0.58, +.58) {}; \node[below left]  at (t) {$(\xi_2; \eta_2)$}; \node[above right] at (t) {$( 1/\sqrt{3};  1/\sqrt{3})$};
+    % \node[dot] (t) at (-0.58, +.58) {}; \node[below right] at (t) {$(\xi_1; \eta_2)$}; \node[above left]  at (t) {$(-1/\sqrt{3};  1/\sqrt{3})$};
+
+    \node[dot] (t) at (-0.58, -.58) {}; \node[below left,  xshift=4mm ] at (t) {$(-1/\sqrt{3}; -1/\sqrt{3}) = (\xi_1; \eta_1)$};
+    \node[dot] (t) at (+0.58, -.58) {}; \node[below right, xshift=-4mm] at (t) {$(\xi_2; \eta_1) = ( 1/\sqrt{3}; -1/\sqrt{3})$};
+    \node[dot] (t) at (+0.58, +.58) {}; \node[above right, xshift=-4mm] at (t) {$(\xi_2; \eta_2) = ( 1/\sqrt{3};  1/\sqrt{3})$};
+    \node[dot] (t) at (-0.58, +.58) {}; \node[above left,  xshift=4mm ] at (t) {$(-1/\sqrt{3};  1/\sqrt{3}) = (\xi_1; \eta_2)$};
   \end{tikzpicture}
   \caption{Gauss-pontok szemléltelése}
   \label{fig:Gaussian}
@@ -369,7 +374,7 @@ A globális merevségi mátrix tehát az alábbi alakot veszi fel:
 vagyis ezen elmozdulás-komponensek zérusak. Ezek alapján a vektor paraméteresen:
 \begin{myframe}
   \begin{equation}
-    \rvec U = \py{latex(V["U_sym"].T).replace('cc', "X{5mm}X{4.95mm}")}^{\mathsf T}
+    \rvec U = \py{latex(V["U_sym"].T)}^{\mathsf T}
     \text.
   \end{equation}
 \end{myframe}
