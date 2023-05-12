@@ -45,7 +45,7 @@ Az egyes elemekhez tartozó csomópontokat a \ref{table:lok}. táblázat foglalj
 \subsection{Koordináta-transzformáció}
 
 Mivel elemeink nem szabályos négyszögek, ezért a számítás megkönnyítéséhez
-érdemes Koordináta-transzformációt végrehajtani. Elemenként egy olyan lokális
+érdemes koordináta-transzformációt végrehajtani. Elemenként egy olyan lokális
 $\xi$-$\eta$ koordináta-rendszerbe fogunk áttérni, ahol a lemezek csúcsainak
 koordinátái rendre $(-1;-1)$, $(1;-1)$, $(1;1)$, $(-1;1)$. A két
 koordináta-reprezentáció közötti kapcsolat:
@@ -151,7 +151,7 @@ Ezek alapján az egyes elemekhez tartozó Jacobi-mátrixok numerikus alakja:
   \end{align}
 \end{myframe}
 A formafüggvények globális és lokális koordináták szerinti parciális deriváltai
-között a Jacobi mátrixok inverzei teremtenek kapcsolatot:
+között a Jacobi-mát\-rix\-ok inverzei teremtenek kapcsolatot:
 \begin{myframe}
   \begin{equation}
     \begin{bmatrix}
@@ -278,19 +278,19 @@ változók szerinti parciális deriváltjait tartalmazza az alábbi módon:
 \end{myframe}
 
 A $\rmat D$ mátrix pedig
-\py{V["state"] == "SF" and "Sík-feszültségi" or "Sík-alakváltozási"} állapot
+\py{V["state"] == "SF" and "sík-feszültségi" or "sík-alakváltozási"} állapot
 esetén az alábbi alakot veszi fel:
 \begin{myframe}
   \newcommand{\sfa}[2]{\py{V["state"] == "SF" and r"#1" or r"#2"}}
   \def\arraystretch{1.15}
   \begin{equation}
     \rmat D_i =
-    \sfa{\frac{E}{1 - \nu^2}}{\frac{E}{(1+\nu)(1-2\nu)}}
-    \begin{bmatrix}
-      \sfa{1}{1-\nu} & \nu            & 0                         \\
-      \nu            & \sfa{1}{1-\nu} & 0                         \\
-      0              & 0              & \sfa{(1-\nu)}{(1-2\nu)}/2
-    \end{bmatrix}
+    \sfa{\frac{E}{1 - \nu^2}}{\frac{E}{(1+\nu)(1-2\nu)}} \;
+    \left[\begin{array}{*{3}{X{15mm}}}
+        \sfa{1}{1-\nu} & \nu            & 0                         \\
+        \nu            & \sfa{1}{1-\nu} & 0                         \\
+        0              & 0              & \sfa{(1-\nu)}{(1-2\nu)}/2
+      \end{array}\right]
     \text.
   \end{equation}
 \end{myframe}
@@ -333,6 +333,7 @@ A globális merevségi mátrix meghatározásához írjuk fel az egyes elemekhez
 kat mátrixosan:
 \begin{myframe}
   \begin{equation}
+    \rmat{DOF} =
     \py{latex(sp.Matrix(V["DOF"]), mat_str="array").replace("cccccccc", "*{8}{X{7mm}}")}
     \text.
   \end{equation}
@@ -369,9 +370,10 @@ A globális merevségi mátrix tehát az alábbi alakot veszi fel:
 \subsection{A merevségi egyenlet}
 
 Írjuk fel a globális elmozdulás-vektort. A görgős megtámasztás miatt a
-(\py{P["F"]["x"][0]}) és (\py{P["F"]["x"][1]}) az $x$, a (\py{P["F"]["y"][0]})
-és (\py{P["F"]["y"][1]}) pontokban pedig az $y$ irányú elmozdulás gátolt,
-vagyis ezen elmozdulás-komponensek zérusak. Ezek alapján a vektor paraméteresen:
+(\py{P["F"]["x"][0]})-es és a (\py{P["F"]["x"][1]})-os pontokban az $x$,
+az (\py{P["F"]["y"][0]})-ös és a (\py{P["F"]["y"][1]})-os pontokban pedig az
+$y$ irányú elmozdulás gátolt, vagyis ezen elmozdulás-komponensek zérusak.
+Ezek alapján a vektor paraméteresen:
 \begin{myframe}
   \begin{equation}
     \rvec U = \py{latex(V["U_sym"].T)}^{\mathsf T}
@@ -384,7 +386,7 @@ a megoszló terhelés, mint koncentrált erő is megjelenik a globális
 terhelésvektorban, amely az alábbi alakot veszi fel:
 \begin{myframe}
   \begin{equation}
-    \rvec F = \py{my_latex(V["F_sym"].T, fold_short_frac=True)}
+    \rvec F = \py{my_latex(V["F_sym"].T, fold_short_frac=True)}^{\mathsf T}
     \text.
   \end{equation}
 \end{myframe}
