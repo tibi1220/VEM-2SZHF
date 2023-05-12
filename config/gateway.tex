@@ -34,6 +34,8 @@ H = printer({
 
 \newcommand{\pv}[1]{\py{V["#1"]}}
 \newcommand{\pvec}[2]{\py{V["#1"][#2]}}
-\newcommand{\pmat}[3]{\py{V["#1"][#2][#3]}}
+\newcommand{\pmat}[3]{\py{V["#1"][#2, #3]}}
 
 \newcommandx{\sipv}[3][3=]{\pyc{H["printSIVar"]({ "name":"#1", "unit":"#2", "dec":"#3" })}}
+\newcommandx{\sipvec}[4][4=]{\pyc{H["printSIDirect"]({ "value":V["#1"][#2], "unit":"#3", "dec":"#4" })}}
+\newcommandx{\sipmat}[5][5=]{\pyc{H["printSIDirect"]({ "value":V["#1"][#2, #3], "unit":"#4", "dec":"#5" })}}

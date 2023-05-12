@@ -319,6 +319,7 @@ def calculate(config):
 
         "C": C,
         "sigma_i": sigma_i,
+        "sigma_2": sigma_i[1],
     }
 
     for k, v in M.items():
