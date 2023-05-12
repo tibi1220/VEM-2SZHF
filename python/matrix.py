@@ -1,10 +1,9 @@
-import numpy as np
 import sympy as sp
 
 
 def sub_matrix(Mx, rows):
     n = len(rows)
-    mx = np.zeros((n, n))
+    mx = sp.zeros(n, n)
 
     for i in range(n):
         for j in range(n):
@@ -15,7 +14,7 @@ def sub_matrix(Mx, rows):
 
 def ext_matrix(mx, rows, size):
     n = len(rows)
-    Mx = np.zeros((size, size))
+    Mx = sp.zeros(size, size)
 
     for i in range(n):
         for j in range(n):
@@ -26,7 +25,7 @@ def ext_matrix(mx, rows, size):
 
 def sub_vector(Vec, rows):
     n = len(rows)
-    vec = sp.Matrix(np.zeros((n, 1)))
+    vec = sp.zeros(n, 1)
 
     for i in range(n):
         vec[i, 0] = Vec[rows[i]-1, 0]
@@ -36,7 +35,7 @@ def sub_vector(Vec, rows):
 
 def ext_vector(vec, rows, size):
     n = len(rows)
-    Vec = np.zeros((size, 1))
+    Vec = sp.zeros(size, 1)
 
     for i in range(n):
         Vec[rows[i]-1, 0] = vec[i, 0]

@@ -3,8 +3,6 @@ from .matrix import ext_matrix, sub_matrix, ext_vector, sub_vector
 
 import sympy as sp
 import numpy as np
-from sympy.interactive import printing
-printing.init_printing(use_latex=True, decimal_separator='period')
 
 
 def get_Jacobian(coords, indices, diff_N):
@@ -56,9 +54,12 @@ def calculate(config):
     transform = []
 
     for i in range(3):
+        # Left hand side of eqs
         l_1, l_2 = 0, 0
         for j in range(4):
+            # N_i * x_i
             l_1 += N[j] * numeric[parametric['rectangles'][i][j]]["x"]
+            # N_i * y_i
             l_2 += N[j] * numeric[parametric['rectangles'][i][j]]["y"]
 
         l_1 = sp.simplify(l_1)
@@ -69,6 +70,7 @@ def calculate(config):
 
         sol = sp.solve([eq_1, eq_2], (xi, eta))
 
+        # Right hand side of eqs
         r_1, r_2 = None, None
 
         if type(sol) is dict:
@@ -210,17 +212,17 @@ def calculate(config):
         F_sym[distributed[d] - 1] = distributed[2] * p_s / 2 * a_s * t_s
 
     tmp = sp.Matrix([free])
-    K_kond = sp.Matrix(sub_matrix(K, tmp))
-    F_kond = sp.Matrix(sub_vector(F_sym.subs({p_s: p, a_s: a, t_s: t}), tmp))
-    U_sym_kond = sp.Matrix(sub_vector(U_sym, tmp))
+    K_kond = sub_matrix(K, tmp)
+    F_kond = sub_vector(F_sym.subs({p_s: p, a_s: a, t_s: t}), tmp)
+    U_sym_kond = sub_vector(U_sym, tmp)
 
     K_kond_inv = K_kond.inv()
     U_kond = K_kond_inv * F_kond
 
-    U_calc = sp.Matrix(ext_vector(U_kond, tmp, 16))
+    U_calc = ext_vector(U_kond, tmp, 16)
     F_calc = K * U_calc
 
-    F_base = sp.Matrix(ext_vector(F_kond, tmp, 16))
+    F_base = ext_vector(F_kond, tmp, 16)
     F_reac = F_calc - F_base
 
     # Calculate Delta in mm and in um
@@ -249,10 +251,10 @@ def calculate(config):
         vertices = parametric['rectangles'][i]
 
         for j in range(4):
-            x_i = numeric[vertices[j]]["x"]
-            y_i = numeric[vertices[j]]["y"]
-            x_ipp = numeric[vertices[j != 3 and j+1 or 0]]["x"]
-            y_ipp = numeric[vertices[j != 3 and j+1 or 0]]["y"]
+            x_i = numeric[vertices[j]]["x"]  # x_i
+            y_i = numeric[vertices[j]]["y"]  # y_i
+            x_ipp = numeric[vertices[j != 3 and j+1 or 0]]["x"]  # x_i+1
+            y_ipp = numeric[vertices[j != 3 and j+1 or 0]]["y"]  # y_i+1
 
             A += 1/2 * (x_i*y_ipp - x_ipp*y_i)
             x_s += (x_i + x_ipp) * (x_i*y_ipp - x_ipp*y_i)
