@@ -74,22 +74,22 @@ Ezek alapján felírható az egyes elemekhez tartozó lokális és a globális
 koordináta-rendszerek közötti transzformáció:
 \begin{myframe}
   \begin{alignat}{9}
-     & (1) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][0]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][0]["y"],2)}
+     & (1) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][0]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][0]["y"],2)} \text,
     \\
-     & (2) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][1]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][1]["y"],2)}
+     & (2) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][1]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][1]["y"],2)} \text,
     \\
-     & (3) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][2]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][2]["y"],2)}
+     & (3) \qquad & \rightarrow \qquad x & = \py{my_latex(V["transform"][2]["x"],2)} \text, &  & \qquad y = \py{my_latex(V["transform"][2]["y"],2)} \text.
   \end{alignat}
 \end{myframe}
 A leképezés inverze pedig:
 \begin{myframe}
   \begin{alignat}{9}
-     & (1) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][0]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][0]["eta"], 4)}
+     & (1) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][0]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][0]["eta"], 4)} \text,
     \\
-     & (2) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][1]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][1]["eta"], 4)}
+     & (2) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][1]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][1]["eta"], 4)} \text,
     \label{eq:alma}
     \\
-     & (3) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][2]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][2]["eta"], 4)}
+     & (3) \qquad & \rightarrow \qquad \xi & = \py{my_latex(V["transform"][2]["xi"], 4)} \text, &  & \qquad \eta = \py{my_latex(V["transform"][2]["eta"], 4)} \text.
   \end{alignat}
 \end{myframe}
 
@@ -117,7 +117,7 @@ A formafüggvények $\xi$ és $\eta$ szerinti parciális deriváltakra van szük
     \text.
   \end{alignat}
 \end{myframe}
-A Jacobi mátrix alakja paraméteresen:
+A Jacobi-mátrix alakja paraméteresen:
 \begin{myframe}
   \begin{equation}
     \rmat J_i = \begin{bmatrix}
@@ -138,15 +138,15 @@ Ezek alapján az egyes elemekhez tartozó Jacobi-mátrixok numerikus alakja:
 \begin{myframe}
   \begin{align}
     \rmat J_1 & =
-    \py{my_latex(V["J"][0], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \py{my_latex(V["J"][0], 3, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
     \text,
     \\
     \rmat J_2 & =
-    \py{my_latex(V["J"][1], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \py{my_latex(V["J"][1], 3, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
     \text,
     \\
     \rmat J_3 & =
-    \py{my_latex(V["J"][2], -1, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
+    \py{my_latex(V["J"][2], 3, mat_str="array").replace('cc', "*{2}{X{3cm}}")}
     \text.
   \end{align}
 \end{myframe}
@@ -224,7 +224,7 @@ fogjuk közelíteni:
     \rmat B_i \,
     t \,
     \det \rmat J_i \,
-    \text,
+    \text.
   \end{equation}
 \end{myframe}
 
@@ -305,7 +305,7 @@ Az elemi merevségi mátrixok tehát numerikusan:
                             \pyc{print_matrix(V["K_i"][0], 1e-6, 1e-6)}
                           \end{array}$}
       \right]
-    \cdot 10^6
+    \cdot 10^6 \,\mathrm{N/m}\text,
     \\
     \siplaces{4}
     \sifix{}
@@ -314,7 +314,7 @@ Az elemi merevségi mátrixok tehát numerikusan:
                             \pyc{print_matrix(V["K_i"][1], 1e-6, 1e-6)}
                           \end{array}$}
       \right]
-    \cdot 10^6
+    \cdot 10^6 \,\mathrm{N/m}\text,
     \\
     \siplaces{4}
     \sifix{}
@@ -323,15 +323,16 @@ Az elemi merevségi mátrixok tehát numerikusan:
                             \pyc{print_matrix(V["K_i"][2], 1e-6, 1e-6)}
                           \end{array}$}
       \right]
-    \cdot 10^6
+    \cdot 10^6 \,\mathrm{N/m}\text.
   \end{align}
 \end{myframe}
 
 \subsection{A globális merevségi mátrix}
 
-A globális merevségi mátrix meghatározásához írjuk fel az egyes elemekhez tartozó szabadsági foko-
-kat mátrixosan:
+A globális merevségi mátrix meghatározásához írjuk fel az egyes elemekhez
+tartozó szabadsági fokokat mátrixosan:
 \begin{myframe}
+  \def\arraystretch{1.15}
   \begin{equation}
     \rmat{DOF} =
     \py{latex(sp.Matrix(V["DOF"]), mat_str="array").replace("cccccccc", "*{8}{X{7mm}}")}
@@ -341,7 +342,7 @@ kat mátrixosan:
 
 A globális merevségi mátrix összeállításakor figyelnünk kell arra, hogy az adott
 elem merevségi mátrixának megfelelő elemeit a hozzá tartozó szabadsági fokhoz
-tartozó helyhez rendeljük hozzá. Ezt a \ref{fig:K-construction} ábra
+tartozó helyhez rendeljük hozzá. Ezt a \ref{fig:K-construction}. ábra
 szemlélteti.
 \begin{figure}[ht]
   \centering
@@ -370,7 +371,7 @@ A globális merevségi mátrix tehát az alábbi alakot veszi fel:
 \subsection{A merevségi egyenlet}
 
 Írjuk fel a globális elmozdulás-vektort. A görgős megtámasztás miatt a
-(\py{P["F"]["x"][0]})-es és a (\py{P["F"]["x"][1]})-os pontokban az $x$,
+(\py{P["F"]["x"][0]})-es és a (\py{P["F"]["x"][1]})-as pontokban az $x$,
 az (\py{P["F"]["y"][0]})-ös és a (\py{P["F"]["y"][1]})-os pontokban pedig az
 $y$ irányú elmozdulás gátolt, vagyis ezen elmozdulás-komponensek zérusak.
 Ezek alapján a vektor paraméteresen:

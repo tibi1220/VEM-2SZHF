@@ -77,7 +77,7 @@ def calculate(config):
             r_1 = sol[xi]
             r_2 = sol[eta]
         else:
-            [(r_1, r_2)] = sp.solve((eq_1, eq_2), (xi, eta))
+            (r_1, r_2) = sol[len(sol) - 1]
 
         transform.append({
             "xi": sp.simplify(r_1),
