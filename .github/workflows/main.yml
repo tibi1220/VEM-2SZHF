@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    container:
+      image: danteev/texlive:latest
     permissions: write-all
     steps:
       - name: Get Current Date
@@ -15,14 +17,14 @@ jobs:
 
       - name: Install dependencies
         id: install_deps
-        run: pip3 install -r requirements.txt
+        run: |
+          apt install python3
+          apt install python3-pip
+          python3 -m pip install -r requirements.txt --break-system-packages
 
       - name: Compile LaTeX Document
         id: compile_latex
-        uses: ktht/latex-action@v3
-        with:
-          args: -r .latexmkrc
-          root_file: main.tex
+        run: latexmk -r .latexmkrc main.tex
 
       - name: Create Release
         id: create_release
