@@ -200,7 +200,7 @@ def calculate(config):
     not_free = parametric["not_free"]
     distributed = parametric["distributed"]
 
-    p_s, a_s, t_s = sp.symbols("p, a, t")
+    p_s, a_s, b_s, c_s, t_s = sp.symbols("p, a, b, c, t")
 
     for d in not_free:
         U_sym[d - 1] = 0
@@ -209,11 +209,24 @@ def calculate(config):
         F_sym[d - 1] = 0
 
     for d in range(2):
-        F_sym[distributed[d] - 1] = distributed[2] * p_s / 2 * a_s * t_s
+        if parametric["code"] == 1:
+            F_sym[distributed[d] - 1] = (
+                distributed[2] * p_s / 2 * a_s * t_s
+            )
+        elif parametric["code"] == 2:
+            F_sym[distributed[d] - 1] = (
+                distributed[2] * p_s / 2 * (c_s - a_s) * t_s
+            )
+        elif parametric["code"] == 3:
+            F_sym[distributed[d] - 1] = (
+                distributed[2] * p_s / 2 * (b_s) * t_s
+            )
 
     tmp = sp.Matrix([free])
     K_kond = sub_matrix(K, tmp)
-    F_kond = sub_vector(F_sym.subs({p_s: p, a_s: a, t_s: t}), tmp)
+    F_kond = sub_vector(F_sym.subs(
+        {p_s: p, a_s: a, b_s: b, c_s: c, t_s: t}
+    ), tmp)
     U_sym_kond = sub_vector(U_sym, tmp)
 
     K_kond_inv = K_kond.inv()
